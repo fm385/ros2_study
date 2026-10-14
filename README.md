@@ -30,4 +30,4 @@ gazebo版本：Harmonic
 
 6.4.3 更新 gazebo 标签写法，见：chapt6/chapt6_ws/src/bot_description/urdf/fishbot/actuator/wheel.urdf.xacro
 
-6.4.4 更新插件写法，见：chapt6/chapt6_ws/src/bot_description/urdf/fishbot/plugins/gazebo_control_plugin.xacro。注意：ros2 launch bot_description display_gazebo.launch.py 启动之后，要在 gazebo 中点左下角的 Play 按钮，再发布 cmd_vel 控制消息，否则 robot 不会响应移动。
+6.4.4 更新插件写法，见：chapt6/chapt6_ws/src/bot_description/urdf/fishbot/plugins/gazebo_control_plugin.xacro。**注意：ros2 launch bot_description display_gazebo.launch.py 启动之后，要在 gazebo 中点左下角的 Play 按钮，再发布 cmd_vel 控制消息，否则 robot 不会响应移动。**
