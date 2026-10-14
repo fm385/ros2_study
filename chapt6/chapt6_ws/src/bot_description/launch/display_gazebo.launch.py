@@ -28,11 +28,6 @@ def generate_launch_description():
                         {'use_sim_time': True},
                     ]
         ),
-        launch_ros.actions.Node(
-            package='joint_state_publisher',
-            executable='joint_state_publisher',
-            parameters=[{'use_sim_time': True}],
-        ),
         launch.actions.IncludeLaunchDescription(
             PythonLaunchDescriptionSource(os.path.join(
                 get_package_share_directory('ros_gz_sim'), 
