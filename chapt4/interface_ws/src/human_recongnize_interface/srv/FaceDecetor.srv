@@ -1,0 +1,5 @@
+sensor_msgs/Image image
+---
+int16 face_num
+float32 use_time
+sensor_msgs/RegionOfInterest[] faces
