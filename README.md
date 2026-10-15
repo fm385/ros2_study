@@ -32,6 +32,9 @@ gazebo版本：Harmonic
 
 6.4.4 更新插件写法，见：chapt6/chapt6_ws/src/bot_description/urdf/fishbot/plugins/gazebo_control_plugin.xacro。**注意：ros2 launch bot_description display_gazebo.launch.py 启动之后，要在 gazebo 中点左下角的 Play 按钮，再发布 cmd_vel 控制消息，否则 robot 不会响应移动。**
 
-6.4.5 更新雷达传感器写法，见：chapt6/chapt6_ws/src/bot_description/urdf/fishbot/plugins/gazebo_sensor_plugin.xacro。**注意：需要在 world 中声明 Sensors 插件，这个动作会导致 gazebo Harmonic 不加载其他默认插件，需要把所有插件都手动声明**
+6.4.5 更新雷达传感器写法，见：chapt6/chapt6_ws/src/bot_description/urdf/fishbot/plugins/gazebo_sensor_plugin.xacro。**注意：需要在 world 中声明 Sensors 插件，这个动作会导致 gazebo Harmonic 不加载其他默认插件，需要把所有插件都手动声明。**
 
 6.4.6 更新惯性测量传感器写法，见：chapt6/chapt6_ws/src/bot_description/urdf/fishbot/plugins/gazebo_sensor_plugin.xacro。
+
+6.4.5 更新深度相机传感器写法，见：chapt6/chapt6_ws/src/bot_description/urdf/fishbot/plugins/gazebo_sensor_plugin.xacro。除了 rviz2 和 rqt，gazebo 右上角可添加 Image Display，也能看图。
+**注意：harmonic 深度相机 type 是 depth_camera，深度图像直接发布到了<topic>标签指定的名称中；harmonic 无需再创建 camera_optical_link 调整镜头，创建了反而有问题。**
