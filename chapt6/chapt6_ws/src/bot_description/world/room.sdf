@@ -22,6 +22,11 @@
       <render_engine>ogre2</render_engine>
     </plugin>
 
+    <!-- 5. imu 传感器 -->
+    <plugin filename="gz-sim-imu-system" 
+    name="gz::sim::systems::Imu">
+    </plugin>
+
     <!-- ==================== 外墙 ==================== -->
     <!-- 左外墙 -->
     <model name="wall_left">
