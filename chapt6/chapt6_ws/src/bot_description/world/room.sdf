@@ -1,6 +1,27 @@
 <?xml version="1.0"?>
 <sdf version="1.9">
   <world name="room">
+    <!-- 1. 物理引擎（必需） -->
+    <plugin filename="gz-sim-physics-system" 
+    name="gz::sim::systems::Physics">
+    </plugin>
+
+    <!-- 2. 场景广播（必需，GUI 和 create 服务依赖它） -->
+    <plugin filename="gz-sim-scene-broadcaster-system" 
+    name="gz::sim::systems::SceneBroadcaster">
+    </plugin>
+
+    <!-- 3. 用户命令（推荐，保留 GUI 拖拽等交互功能） -->
+    <plugin filename="gz-sim-user-commands-system" 
+    name="gz::sim::systems::UserCommands">
+    </plugin>
+
+    <!-- 4. 传感器系统（gz 默认不会加这个，手动添加会导致不加载其他默认插件，所以上面3个也要列出） -->
+    <plugin filename="gz-sim-sensors-system" 
+    name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+
     <!-- ==================== 外墙 ==================== -->
     <!-- 左外墙 -->
     <model name="wall_left">

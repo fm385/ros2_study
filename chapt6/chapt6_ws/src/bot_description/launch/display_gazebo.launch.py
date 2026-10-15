@@ -19,6 +19,9 @@ def generate_launch_description():
         name='world', default_value=str(default_world_path))
 
     return launch.LaunchDescription([
+        # 设置 PRIME Render Offload 环境变量
+        launch.actions.SetEnvironmentVariable('__NV_PRIME_RENDER_OFFLOAD', '1'),
+        launch.actions.SetEnvironmentVariable('__GLX_VENDOR_LIBRARY_NAME', 'nvidia'),
         action_declare_arg_mode_path,
         action_declare_arg_world_sdf_path,
         launch_ros.actions.Node(
