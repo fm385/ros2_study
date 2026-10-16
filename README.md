@@ -38,3 +38,11 @@ gazebo版本：Harmonic
 
 6.4.5 更新深度相机传感器写法，见：chapt6/chapt6_ws/src/bot_description/urdf/fishbot/plugins/gazebo_sensor_plugin.xacro。除了 rviz2 和 rqt，gazebo 右上角可添加 Image Display，也能看图。
 **注意：harmonic 深度相机 type 是 depth_camera，深度图像直接发布到了<topic>标签指定的名称中；harmonic 无需再创建 camera_optical_link 调整镜头，创建了反而有问题。**
+
+6.5.2 主要是 plugin 标签中的 gazebo 改为 gz，整体改动不大。
+
+6.5.3 之前 spawn robot 到 gazebo 用的是 LaunchDescription，注册事件监听器只支持 ExecuteProcess 或 Node，把 spawn 改成 ExecuteProcess。
+
+6.5.4 抄书上的代码，无需改动。
+
+6.5.5 yaml 中的 use_stamped_vel: false 配置无效，fishbot_diff_drive_controller 只有 cmd_vel 话题，没有 cmd_vel_unstamped 话题，映射配置修改后，用 ros2 run teleop_twist_keyboard teleop_twist_keyboard **--ros-args -p stamped:=true** 启动键盘模拟，否则发送的话题类型不匹配，带时间戳 geometry_msgs/msg/TwistStamped，不带时间戳 geometry_msgs/msg/Twist。

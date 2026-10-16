@@ -18,12 +18,51 @@ def generate_launch_description():
     action_declare_arg_world_sdf_path = launch.actions.DeclareLaunchArgument(
         name='world', default_value=str(default_world_path))
 
+    spawn_entity_node = launch.actions.ExecuteProcess(
+        cmd=[
+            'ros2', 'run', 'ros_gz_sim', 'create',
+            '-world', 'room',
+            '-topic', '/robot_description',
+            '-name', 'fishbot',
+        ],
+        output='screen',
+    )
+    load_joint_state_controller = launch.actions.ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller', '--set-state',
+             'active', 'fishbot_joint_state_broadcaster'],
+        output='screen'
+    )
+    # 这个和 diff_drive_controller 互斥，留一个即可
+    # 如果开启，下面 RegisterEventHandler 同步修改
+    # load_fishbot_effort_controller = launch.actions.ExecuteProcess(
+    #     cmd=['ros2', 'control', 'load_controller', '--set-state',
+    #          'active', 'fishbot_effort_controller'],
+    #     output='screen'
+    # )
+    load_fishbot_diff_drive_controller = launch.actions.ExecuteProcess(
+            cmd=['ros2', 'control', 'load_controller', '--set-state',
+                 'active', 'fishbot_diff_drive_controller'],
+            output='screen'
+        )
+
     return launch.LaunchDescription([
         # 设置 PRIME Render Offload 环境变量
         launch.actions.SetEnvironmentVariable('__NV_PRIME_RENDER_OFFLOAD', '1'),
         launch.actions.SetEnvironmentVariable('__GLX_VENDOR_LIBRARY_NAME', 'nvidia'),
         action_declare_arg_mode_path,
         action_declare_arg_world_sdf_path,
+        launch.actions.RegisterEventHandler(
+            event_handler=launch.event_handlers.OnProcessExit(
+                target_action=spawn_entity_node,
+                on_exit=[load_joint_state_controller]
+            )
+        ),
+        launch.actions.RegisterEventHandler(
+            event_handler=launch.event_handlers.OnProcessExit(
+                target_action=load_joint_state_controller,
+                on_exit=[load_fishbot_diff_drive_controller]
+            )
+        ),
         launch_ros.actions.Node(
             package='robot_state_publisher',
             executable='robot_state_publisher',
@@ -39,24 +78,13 @@ def generate_launch_description():
             )),
             launch_arguments=[('gz_args', launch.substitutions.LaunchConfiguration('world'))]
         ),
-        launch.actions.IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(os.path.join(
-                get_package_share_directory('ros_gz_sim'), 
-                'launch',
-                'gz_spawn_model.launch.py'
-            )),
-            launch_arguments={
-                'world': 'room',
-                'topic': '/robot_description',
-                'entity_name': 'fishbot',
-            }.items()
-        ),
+        spawn_entity_node,
         launch_ros.actions.Node(
             package='ros_gz_bridge',
             executable='parameter_bridge',
             arguments=['--ros-args', 
                        '-p', 
-                       'config_file:=' + os.path.join(urdf_tutorial_path, 'urdf', 'fishbot', 'bridge_config.yaml'),
+                       'config_file:=' + os.path.join(urdf_tutorial_path, 'config', 'bridge_config.yaml'),
                        ],
             parameters=[{'use_sim_time': True}],
             output='screen'
