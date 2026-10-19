@@ -46,3 +46,5 @@ gazebo版本：Harmonic
 6.5.4 抄书上的代码，无需改动。
 
 6.5.5 yaml 中的 use_stamped_vel: false 配置无效，fishbot_diff_drive_controller 只有 cmd_vel 话题，没有 cmd_vel_unstamped 话题，映射配置修改后，用 ros2 run teleop_twist_keyboard teleop_twist_keyboard **--ros-args -p stamped:=true** 启动键盘模拟，否则发送的话题类型不匹配，带时间戳 geometry_msgs/msg/TwistStamped，不带时间戳 geometry_msgs/msg/Twist。
+
+7.2.1 建图过程中发生漂移，是多种因素混合的结果，首先尝试降低车速（角速度、线速度都降），过快的车速更易引发偏移；其次提升激光雷达发布频率，提升相邻帧的重叠量，便于算法匹配修正；然后尝试在地图中空旷部分放置特征物体，有助于匹配修正。以上方案都无效的话，检查 tf 和 odom，复杂性更高，目前还没有遇到。
