@@ -4,6 +4,7 @@ from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
 from tf2_ros import TransformListener, Buffer
 from tf_transformations import euler_from_quaternion, quaternion_from_euler
 from rclpy.duration import Duration
+from autopatrol_interfaces.srv import SpeachText
 
 class PatrolNode(BasicNavigator):
     def __init__(self, node_name='patrol_node'):
@@ -14,6 +15,7 @@ class PatrolNode(BasicNavigator):
         self.target_points_ = self.get_parameter('target_points').value
         self.buffer_ = Buffer()
         self.listener_ = TransformListener(self.buffer_, self)
+        self.speach_client_ = self.create_client(SpeachText, 'speech_text')
 
     def get_pose_by_xyyaw(self, x, y, yaw):
         pose = PoseStamped()
@@ -81,15 +83,38 @@ class PatrolNode(BasicNavigator):
             except Exception as e:
                 self.get_logger().warn(f'get transform failed:{str(e)}')
 
+    def speach_text(self, text):
+        while not self.speach_client_.wait_for_service(timeout_sec=1.0):
+            self.get_logger().info('wait for speech service...')
+
+        request = SpeachText.Request()
+        request.text = text
+        future = self.speach_client_.call_async(request)
+        rclpy.spin_until_future_complete(self, future)
+        if future.result() is not None:
+            result = future.result().result
+            if result:
+                self.get_logger().info(f'voice text success:{text}')
+            else:
+                self.get_logger().info(f'voice text failed:{text}')
+        else:
+                self.get_logger().info(f'call speech service failed.')
+
 
 def main():
     rclpy.init()
     patrol = PatrolNode()
+    patrol.speach_text('正在初始化位置')
     patrol.init_robot_pose()
+    patrol.speach_text('初始化位置完成')
 
     while rclpy.ok():
         points = patrol.get_target_points()
         for point in points:
-            pose_stamped = patrol.get_pose_by_xyyaw(point[0], point[1], point[2])
+            x, y, yaw = point[0], point[1], point[2]
+            pose_stamped = patrol.get_pose_by_xyyaw(x, y, yaw)
+            patrol.speach_text(f'准备前往目标点 {x}, {y}')
             patrol.nav_to_pose(pose_stamped)
+            patrol.speach_text(f'已到达目标点 {x}, {y}')
+
     rclpy.shutdown()
