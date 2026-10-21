@@ -54,3 +54,5 @@ gazebo版本：Harmonic
 7.3.4 Nav2 Goal 指定目标后 bot 不移动，还是 6.5.5 中说的消息类型问题，use_stamped_vel: false 在 Jazzy 后已废弃，强制 geometry_msgs/msg/TwistStamped 消息，需要为 nav2 的配置添加 enable_stamped_cmd_vel: true。
 
 7.3.6 ros2 jazzy 的 controller_server 的 FollowPath 默认类型为nav2_mppi_controller::MPPIController，最大速度和加速度配置变量与书中不同：最大角速度 wz_max，最大角加速度 az_max，最大线速度 vx_max，最大线加速度 ax_max。
+
+7.5.4 话题 /camera_sensor/image_raw 无数据，改为用深度相机 /camera/depth/image_raw 保存图像，chapt7/chapt7_ws/src/autopatrol_robot/saved_image 中保存了几张运行时截图。**开启 gazebo sim 和 rviz 后尽快初始化位置，否则可能无法操作，可能某个组件有超时限制。**

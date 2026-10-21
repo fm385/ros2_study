@@ -5,17 +5,31 @@ from tf2_ros import TransformListener, Buffer
 from tf_transformations import euler_from_quaternion, quaternion_from_euler
 from rclpy.duration import Duration
 from autopatrol_interfaces.srv import SpeachText
+from sensor_msgs.msg import Image
+from cv_bridge import CvBridge
+import cv2
 
 class PatrolNode(BasicNavigator):
     def __init__(self, node_name='patrol_node'):
         super().__init__(node_name)
+        # 巡航相关
         self.declare_parameter('initial_point', [0.0, 0.0, 0.0])
         self.declare_parameter('target_points', [0.0, 0.0, 0.0, 1.0, 1.0, 1.57])
         self.initial_point_ = self.get_parameter('initial_point').value
         self.target_points_ = self.get_parameter('target_points').value
+        # 语音相关
         self.buffer_ = Buffer()
         self.listener_ = TransformListener(self.buffer_, self)
         self.speach_client_ = self.create_client(SpeachText, 'speech_text')
+        # 图像相关
+        self.declare_parameter('image_save_path', '')
+        self.image_save_path_ = self.get_parameter('image_save_path').value
+        self.bridge_ = CvBridge()
+        self.latest_image_ = None
+        self.subscription_image_ = self.create_subscription(Image,
+                                                            '/camera/depth/image_raw',
+                                                            self.image_callback,
+                                                            10)
 
     def get_pose_by_xyyaw(self, x, y, yaw):
         pose = PoseStamped()
@@ -100,6 +114,15 @@ class PatrolNode(BasicNavigator):
         else:
                 self.get_logger().info(f'call speech service failed.')
 
+    def image_callback(self, msg):
+        self.latest_image_ = msg
+
+    def record_image(self):
+        if self.latest_image_ is not None:
+            pose = self.get_current_pose()
+            cv_image = self.bridge_.imgmsg_to_cv2(self.latest_image_)
+            cv2.imwrite(f'{self.image_save_path_}image_{pose.translation.x:3.2f}_{pose.translation.y:3.2f}.png', cv_image)
+
 
 def main():
     rclpy.init()
@@ -115,6 +138,8 @@ def main():
             pose_stamped = patrol.get_pose_by_xyyaw(x, y, yaw)
             patrol.speach_text(f'准备前往目标点 {x}, {y}')
             patrol.nav_to_pose(pose_stamped)
-            patrol.speach_text(f'已到达目标点 {x}, {y}')
+            patrol.speach_text(f'已到达目标点 {x}, {y}，准备记录图像')
+            patrol.record_image()
+            patrol.speach_text('图像记录完成')
 
     rclpy.shutdown()
