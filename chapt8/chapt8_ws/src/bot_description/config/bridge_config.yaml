@@ -1,0 +1,76 @@
+# 两轮差速控制插件 DiffDrive
+# 第六章最后已改为用 ros2_control，下面DiffDrive相关配置可以去掉，防止混淆
+# # 控制移动
+# - ros_topic_name: "/cmd_vel"
+#   gz_topic_name: "/cmd_vel"
+#   ros_type_name: "geometry_msgs/msg/Twist"
+#   gz_type_name: "gz.msgs.Twist"
+#   direction: ROS_TO_GZ
+# # 里程计
+# - ros_topic_name: "/odom"
+#   gz_topic_name: "/odom"
+#   ros_type_name: "nav_msgs/msg/Odometry"
+#   gz_type_name: "gz.msgs.Odometry"
+#   direction: GZ_TO_ROS
+# # 坐标转换
+# - ros_topic_name: "/tf"
+#   gz_topic_name: "/tf"
+#   ros_type_name: "tf2_msgs/msg/TFMessage"
+#   gz_type_name: "gz.msgs.Pose_V"
+#   direction: GZ_TO_ROS
+# # 关节状态 JointStatePublisher
+# - ros_topic_name: "/joint_states"
+#   gz_topic_name: "/joint_states"
+#   ros_type_name: "sensor_msgs/msg/JointState"
+#   gz_type_name: "gz.msgs.Model"
+#   direction: GZ_TO_ROS
+
+# 雷达 Sensors
+- ros_topic_name: "/scan"
+  gz_topic_name: "/scan"
+  ros_type_name: "sensor_msgs/msg/LaserScan"
+  gz_type_name: "gz.msgs.LaserScan"
+  direction: GZ_TO_ROS
+
+# Imu
+- ros_topic_name: "/imu"
+  gz_topic_name: "/imu"
+  ros_type_name: "sensor_msgs/msg/Imu"
+  gz_type_name: "gz.msgs.IMU"
+  direction: GZ_TO_ROS
+
+# 深度相机
+# 深度图像话题，harmonic 的 depth_camera 相机只有深度图像，在/camera 下
+- ros_topic_name: "/camera/depth/image_raw"
+  gz_topic_name: "/camera"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "gz.msgs.Image"
+  direction: GZ_TO_ROS
+
+# 彩色图像话题 harmonic 的 depth_camera 相机只有深度图像，没有彩色图像
+# - ros_topic_name: "/camera/color/image_raw"
+#   gz_topic_name: "/camera/image"
+#   ros_type_name: "sensor_msgs/msg/Image"
+#   gz_type_name: "gz.msgs.Image"
+#   direction: GZ_TO_ROS
+
+# 点云话题
+- ros_topic_name: "/camera/points"
+  gz_topic_name: "/camera/points"
+  ros_type_name: "sensor_msgs/msg/PointCloud2"
+  gz_type_name: "gz.msgs.PointCloudPacked"
+  direction: GZ_TO_ROS
+
+# 相机信息话题
+- ros_topic_name: "/camera/camera_info"
+  gz_topic_name: "/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "gz.msgs.CameraInfo"
+  direction: GZ_TO_ROS
+
+# 仿真时钟
+- ros_topic_name: "/clock"
+  gz_topic_name: "/clock"
+  ros_type_name: "rosgraph_msgs/msg/Clock"
+  gz_type_name: "gz.msgs.Clock"
+  direction: GZ_TO_ROS
