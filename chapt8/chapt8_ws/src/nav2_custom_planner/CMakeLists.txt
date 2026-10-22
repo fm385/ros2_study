@@ -9,6 +9,12 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(nav2_core REQUIRED)
 find_package(pluginlib REQUIRED)
+include_directories(include)
+
+set(library_name ${PROJECT_NAME}_plugin)
+
+add_library(${library_name} SHARED src/nav2_custom_planner.cpp)
+ament_target_dependencies(${library_name} nav2_core pluginlib)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -21,5 +27,17 @@ if(BUILD_TESTING)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
+
+install(TARGETS ${library_name}
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+)
+
+install(DIRECTORY include/
+  DESTINATION include/
+)
+
+pluginlib_export_plugin_description_file(nav2_core custom_planner_plugin.xml)
 
 ament_package()
